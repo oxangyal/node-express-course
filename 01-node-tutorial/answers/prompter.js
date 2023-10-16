@@ -67,6 +67,13 @@ const server = http.createServer((req, res) => {
         res.end(form());
     }
 });
-
-server.listen(3000);
-console.log("The server is listening on port 3000.");
+server.on("request", (req) => {
+    console.log("event received: ", req.method, req.url);
+});
+console.log(
+    "This text will restart the program by Nodemon because this file has changed."
+);
+const port = 3000;
+server.listen(port);
+console.log(`The server is listening on port ${port}.`);
+console.log("Added text into this file");
