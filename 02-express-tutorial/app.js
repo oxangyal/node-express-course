@@ -1,9 +1,49 @@
 const http = require("http");
 const express = require("express");
 const app = express();
-const { products } = require("./data");
+const { products, people } = require("./data");
+const logger = require("./logger");
+
 
 app.use(express.static("./public"));
+// app.use(express.static("./methods-public"));
+app.use(logger);
+
+//invoke middleware with app.get() statement
+app.get("/", logger, (req, res) => {
+    console.log("Hello via get");
+    res.send("hello world");
+});
+
+// The second way to invoke middleware is via an app.use() statement:
+// app.use(["/path1", "/path2"], logger);
+
+app.get("/api/v1/people", (req, res) => {
+    res.status(200).json({ success: true, data: people });
+});
+
+// parse form data
+app.use(express.urlencoded({ extended: false }));
+// parse form json
+app.use(express.json());
+
+const getMaxId = () => {
+    return people.reduce((ret, cur) => (ret < cur.id ? cur.id : ret), 0);
+};
+
+app.post("/api/v1/people", (req, res) => {
+    console.log(req.body);
+    const { name } = req.body;
+    if (!name) {
+        return res
+            .status(400)
+            .json({ success: false, msg: "Please provide a name" });
+    }
+
+    newId = getMaxId() + 1;
+    people.push({ id: newId, name: req.body.name });
+    res.status(201).json({ success: true, name: name, id: newId });
+});
 
 app.get("/api/v1/test", (req, res) => {
     res.status(200).json({ message: "It worked!" });
