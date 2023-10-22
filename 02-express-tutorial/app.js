@@ -1,12 +1,13 @@
 const http = require("http");
 const express = require("express");
 const app = express();
-const { products, people } = require("./data");
+// const { products, people } = require("./data");
 const logger = require("./logger");
+const peopleRouter = require("./routes/people");
+const productsRouter = require("./routes/products");
 
-
-app.use(express.static("./public"));
-// app.use(express.static("./methods-public"));
+// app.use(express.static("./public"));
+app.use(express.static("./methods-public"));
 app.use(logger);
 
 //invoke middleware with app.get() statement
@@ -18,82 +19,66 @@ app.get("/", logger, (req, res) => {
 // The second way to invoke middleware is via an app.use() statement:
 // app.use(["/path1", "/path2"], logger);
 
-app.get("/api/v1/people", (req, res) => {
-    res.status(200).json({ success: true, data: people });
-});
+// app.get("/api/v1/people", (req, res) => {
+//     res.status(200).json({ success: true, data: people });
+// });
 
 // parse form data
 app.use(express.urlencoded({ extended: false }));
 // parse form json
 app.use(express.json());
 
-const getMaxId = () => {
-    return people.reduce((ret, cur) => (ret < cur.id ? cur.id : ret), 0);
-};
+app.use("/api/v1/people", peopleRouter);
+app.use("/api/v1/products", productsRouter);
 
-app.post("/api/v1/people", (req, res) => {
-    console.log(req.body);
-    const { name } = req.body;
-    if (!name) {
-        return res
-            .status(400)
-            .json({ success: false, msg: "Please provide a name" });
-    }
+// app.get("/api/v1/test", (req, res) => {
+//     res.status(200).json({ message: "It worked!" });
+// });
 
-    newId = getMaxId() + 1;
-    people.push({ id: newId, name: req.body.name });
-    res.status(201).json({ success: true, name: name, id: newId });
-});
+// app.get("/api/v1/products", (req, res) => {
+//     res.status(200).json(products);
+// });
 
-app.get("/api/v1/test", (req, res) => {
-    res.status(200).json({ message: "It worked!" });
-});
+// app.get("/api/v1/products/:productID", (req, res) => {
+//     const idToFind = parseInt(req.params.productID);
+//     const product = products.find((p) => p.id === idToFind);
 
-app.get("/api/v1/products", (req, res) => {
-    res.status(200).json(products);
-});
+//     if (!product) {
+//         res.status(404).json({ message: "This product does't exist" });
+//     } else {
+//         res.status(200).json(product);
+//     }
+// });
 
-app.get("/api/v1/products/:productID", (req, res) => {
-    const idToFind = parseInt(req.params.productID);
-    const product = products.find((p) => p.id === idToFind);
+// app.get("/api/v1/query", (req, res) => {
+//     console.log(req.query);
+//     const { search, limit, priceLess } = req.query;
 
-    if (!product) {
-        res.status(404).json({ message: "This product does't exist" });
-    } else {
-        res.status(200).json(product);
-    }
-});
+//     if (search) {
+//         sortedItems = sortedItems.filter((product) => {
+//             return product.name.startsWith(search);
+//         });
+//     }
 
-app.get("/api/v1/query", (req, res) => {
-    console.log(req.query);
-    const { search, limit, priceLess } = req.query;
-    let sortedItems = [...products];
+//     if (limit) {
+//         sortedItems = sortedItems.slice(0, Number(limit));
+//     }
 
-    if (search) {
-        sortedItems = sortedItems.filter((product) => {
-            return product.name.startsWith(search);
-        });
-    }
+//     if (priceLess) {
+//         sortedItems = sortedItems.filter((product) => {
+//             return product.price < priceLess;
+//         });
+//     }
 
-    if (limit) {
-        sortedItems = sortedItems.slice(0, Number(limit));
-    }
+//     if (sortedItems.length < 1) {
+//         return res.status(200).json({ success: true, data: [] });
+//     }
+//     return res.status(200).json(sortedItems);
+// });
 
-    if (priceLess) {
-        sortedItems = sortedItems.filter((product) => {
-            return product.price < priceLess;
-        });
-    }
-
-    if (sortedItems.length < 1) {
-        return res.status(200).json({ success: true, data: [] });
-    }
-    return res.status(200).json(sortedItems);
-});
-
-app.use((req, res) => {
-    res.status(404).send("Page not found");
-});
+// app.use((req, res) => {
+//     res.status(404).send("Page not found");
+// });
 
 const server = http.createServer(app);
 
