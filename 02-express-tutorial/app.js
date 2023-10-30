@@ -1,58 +1,62 @@
 const http = require("http");
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const app = express();
-const { products } = require("./data");
+// const { products, people } = require("./data");
+const logger = require("./middleware/logger");
+const auth = require("./routes/auth");
+const authMid = require("./middleware/auth");
 
-app.use(express.static("./public"));
+//imports routes
+const peopleRouter = require("./routes/people");
+const productsRouter = require("./routes/products");
+const authRouter = require("./routes/auth");
 
-app.get("/api/v1/test", (req, res) => {
-    res.status(200).json({ message: "It worked!" });
+// middleware for static assets and parsing
+// app.use(express.static("./public"));
+app.use(express.static("./methods-public"));
+// custom middleware
+app.use(logger);
+//invoke middleware with app.get() statement
+app.get("/", logger, (req, res) => {
+    console.log("Hello via get");
+    res.send("hello world");
 });
 
-app.get("/api/v1/products", (req, res) => {
-    res.status(200).json(products);
-});
+// The second way to invoke middleware is via an app.use() statement:
+// app.use(["/path1", "/path2"], logger);
 
-app.get("/api/v1/products/:productID", (req, res) => {
-    const idToFind = parseInt(req.params.productID);
-    const product = products.find((p) => p.id === idToFind);
+// parse form data
+app.use(express.urlencoded({ extended: false }));
+// parse form json
+app.use(express.json());
+//Parse cookies
+app.use(cookieParser());
 
-    if (!product) {
-        res.status(404).json({ message: "This product does't exist" });
+// POST route to log in
+app.post("/login", (req, res) => {
+    if (!req.body.name) {
+        res.status(400).json({
+            success: false,
+            message: "Please provide a name",
+        });
     } else {
-        res.status(200).json(product);
+        res.status(201).send(`Welcome ${req.body.name}`);
     }
 });
 
-app.get("/api/v1/query", (req, res) => {
-    console.log(req.query);
-    const { search, limit, priceLess } = req.query;
-    let sortedItems = [...products];
+// API routes
+app.use("/api/v1/people", peopleRouter);
+app.use("/api/v1/products", productsRouter);
+app.use("/api/v1/auth", authRouter);
 
-    if (search) {
-        sortedItems = sortedItems.filter((product) => {
-            return product.name.startsWith(search);
-        });
-    }
-
-    if (limit) {
-        sortedItems = sortedItems.slice(0, Number(limit));
-    }
-
-    if (priceLess) {
-        sortedItems = sortedItems.filter((product) => {
-            return product.price < priceLess;
-        });
-    }
-
-    if (sortedItems.length < 1) {
-        return res.status(200).json({ success: true, data: [] });
-    }
-    return res.status(200).json(sortedItems);
+app.get("/test", authMid, (req, res) => {
+    res.status(200).json({ message: `Welcome to the user, ${req.user}!` });
 });
 
-app.use((req, res) => {
-    res.status(404).send("Page not found");
+//catch all for 404 
+app.all("*", (req, res) => {
+    res.status(404).send("<h1>Page not found</h1>");
 });
 
 const server = http.createServer(app);
