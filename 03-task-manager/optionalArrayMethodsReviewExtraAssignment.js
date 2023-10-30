@@ -217,14 +217,15 @@ const names1 = [
     "Mariana Gomez",
     "Amy You",
 ];
-const arrayTitle = names1.map(name => {
-    const words = name.split(/ +/);
-    const titledWords = words.map(word => {
-        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+const titleCase = names1.map((name) => {
+    const words = name.split(" ");
+    const capitalized = words.map((word) => {
+        let str = word.toLowerCase();
+        return str.charAt(0).toUpperCase() + str.slice(1);
     });
-    return titledWords.join(" ");
+    return capitalized.join(" ");
 });
-console.log(arrayTitle);    
+console.log(titleCase);  
 
 // - Last Challenge:
 //     Remove names with the wrong format
@@ -242,6 +243,32 @@ const names = [
     "Mariana Gomez",
     "Amy You",
 ];
+
+const formatName = (name) => {
+    const words = name.split(" ");
+    const capitalized = words.map((word) => {
+        let str = word.toLowerCase();
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    });
+    return capitalized.join(" ");
+};
+
+const checkName = (name) => {
+    let formatted = formatName(name);
+    if (name.slice(-1) === "z") {
+        console.log("Please sign up " + formatted);
+        return false;
+    }
+    if (!(name === formatted)) {
+        console.log("Please sign up " + formatted);
+        return false;
+    }
+
+    return true;
+};
+const filteredArr = names.filter((name) => checkName(name));
+console.log(filteredArr);
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //// put your answers above if you wish to do the challenges on your own //////
