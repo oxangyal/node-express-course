@@ -130,43 +130,21 @@ console.log({ lookupJane: peopleNameMap["jane"] });
 // Each challenge will be related to this array of names. It will pose a
 // problem related to these names, and then implement the solution. The
 // challenges are:
-
-const namesArray = [
-    "Dimitry SantiAgo",
-    "Carlos d. Perez",
-    "tam  person",
-    "Mariana Gomez",
-    "Amy You",
-];
 // - Create a new array with only each person's last name
 const lastName = names.map((name) => name.split(" ")[1]);
 console.log(lastName);
 
 // - Filter names that don't match the format "<first> <last>"
-const firstLast = namesArray.filter((name) => (name = name.includes(" ")));
+const firstLast = names.filter((name) => (name = name.includes(" ")));
 console.log(firstLast);
 
 //   - Should remove Tam because she has a double-space
-const namesArray2 = [
-    "Dimitry SantiAgo",
-    "Carlos d. Perez",
-    "Tam  Smith",
-    "Mariana Gomez",
-    "Amy You",
-];
-const doubleSpace = namesArray2.filter((name) => !name.includes("  "));
+const doubleSpace = names.filter((name) => !name.includes("  "));
 console.log(doubleSpace);
 
 //   - Should remove Carlow because he has a middle-name
-const namesArray3 = [
-    "Dimitry SantiAgo",
-    "Carlos d. Perez",
-    "Tam  Smith",
-    "Mariana Gomez",
-    "Amy You",
-    "Carlow Tim Smith",
-];
-const middleName = namesArray3.filter(
+
+const middleName = names.filter(
     (name) => (name) => name.split(" ").length === 2
 );
 console.log(middleName);
@@ -177,55 +155,29 @@ console.log(middleName);
 //     - "Billy\nBob"
 //     - etc.
 
-const namesArray4 = [
-    "Emma Wattson",
-    "Cindy Crawford",
-    "Chris Evans",
-    "Rebecca",
-    "Carlow Tim Smith",
-    "Timothy      Cook",
-    "Nick_Masters",
-    "Timmy-Turner",
-    "Billy\nBob",
-];
-const wrongNames = namesArray4.slice(5);
+
+const wrongNames = names.slice(5);
 console.log(wrongNames);
 
-const namesArray5 = [
-    "Emma Wattson",
-    "Cindy Crawford",
-    "Chris Evans",
-    "Rebecca",
-    "Carlow Tim Smith",
-    "Timothy      Cook",
-    "Nick_Masters",
-    "Timmy-Turner",
-    "Billy\nBob",
-];
 const regEx = /[^A-Za-z\s]/;
-const newArr = namesArray5.filter((name) => !regEx.test(name));
+const newArr = names.filter((name) => !regEx.test(name));
 console.log(newArr);
 
 // - Create a new array where everyone's name is converted to "Title Case"
 //   - The first character of each word should be uppercase
 //   - All other characters in the word should be lowercase
 //   - expected output is ['Dimitry Santiago', 'Carlos D. Perez', 'Tam Person', ...]
-const names1 = [
-    "Dimitry SantiAgo",
-    "Carlos d. Perez",
-    "tam  person",
-    "Mariana Gomez",
-    "Amy You",
-];
-const titleCase = names1.map((name) => {
-    const words = name.split(" ");
-    const capitalized = words.map((word) => {
-        let str = word.toLowerCase();
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    });
-    return capitalized.join(" ");
-});
-console.log(titleCase);  
+
+const titleCase = names.map((name) =>
+    name
+        .split(" ")
+        .map(
+            (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+        .join(" ")
+);
+
+console.log(titleCase);
 
 // - Last Challenge:
 //     Remove names with the wrong format
@@ -236,6 +188,29 @@ console.log(titleCase);
 // For an extra assignment, you may implement these yourself! Include your
 // changes to this file with your MR for week 3.
 
+
+const formatName = (name) =>
+    name
+        .split(" ")
+        .map(
+            (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+        .join(" ");
+
+const checkName = (name) => {
+    const formatted = formatName(name);
+
+    if (name.slice(-1) === "z" || name !== formatted) {
+        console.log("Please sign up " + formatted);
+        return false;
+    }
+
+    return true;
+};
+
+const filteredArr = names.filter(checkName);
+console.log(filteredArr);
+
 const names = [
     "Dimitry SantiAgo",
     "Carlos d. Perez",
@@ -243,32 +218,6 @@ const names = [
     "Mariana Gomez",
     "Amy You",
 ];
-
-const formatName = (name) => {
-    const words = name.split(" ");
-    const capitalized = words.map((word) => {
-        let str = word.toLowerCase();
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    });
-    return capitalized.join(" ");
-};
-
-const checkName = (name) => {
-    let formatted = formatName(name);
-    if (name.slice(-1) === "z") {
-        console.log("Please sign up " + formatted);
-        return false;
-    }
-    if (!(name === formatted)) {
-        console.log("Please sign up " + formatted);
-        return false;
-    }
-
-    return true;
-};
-const filteredArr = names.filter((name) => checkName(name));
-console.log(filteredArr);
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //// put your answers above if you wish to do the challenges on your own //////
