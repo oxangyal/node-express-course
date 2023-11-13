@@ -1,0 +1,15 @@
+1. Middleware is a functionality on the server between request and response. It helps process incoming
+requests and prepare outgoing responses, used for authentication, authorization, logging.
+2. CRUD means 
+
+Create POST req 
+Read GET req
+Update PATCH/PUT req
+Delete DELETE  req
+
+3. Install the package like dotenv 
+write in JS:
+require('dotenv').config();
+
+To protect the contents of the .env file you can add it to the .gitignore file, 
+so that it is not stored in your GitHub repo. 
